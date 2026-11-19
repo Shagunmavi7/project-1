@@ -1,0 +1,113 @@
+{
+  "trained_at": "2026-11-18 20:41:36",
+  "training_seconds": 69.3,
+  "binary_benchmark": {
+    "dataset_total_rows": 5572,
+    "dataset_unique_rows": 5158,
+    "models": [
+      {
+        "model": "Original Baseline (TF-IDF + LR)",
+        "accuracy": 0.9583,
+        "precision": 0.9775,
+        "recall": 0.6797,
+        "f1": 0.8018,
+        "roc_auc": 0.9897
+      },
+      {
+        "model": "Upgraded LR (Word+Char+Signals)",
+        "accuracy": 0.9922,
+        "precision": 0.9839,
+        "recall": 0.9531,
+        "f1": 0.9683,
+        "roc_auc": 0.9992
+      },
+      {
+        "model": "Upgraded LinearSVC (Calibrated)",
+        "accuracy": 0.9922,
+        "precision": 0.9918,
+        "recall": 0.9453,
+        "f1": 0.968,
+        "roc_auc": 0.9984
+      },
+      {
+        "model": "Upgraded Ensemble (LR + SVM + CNB)",
+        "accuracy": 0.9932,
+        "precision": 0.9919,
+        "recall": 0.9531,
+        "f1": 0.9721,
+        "roc_auc": 0.9986
+      }
+    ],
+    "cv_5fold_accuracy_mean": 0.9913,
+    "cv_5fold_accuracy_std": 0.0031,
+    "cv_5fold_f1_mean": 0.9642,
+    "cv_5fold_f1_std": 0.0126
+  },
+  "three_class": {
+    "dataset_unique_rows": 14174,
+    "class_counts": {
+      "ham": 9016,
+      "phishing": 4516,
+      "spam": 642
+    },
+    "test_size": 2835,
+    "accuracy": 0.9848,
+    "macro_f1": 0.9766,
+    "weighted_f1": 0.9848,
+    "labels_order": [
+      "ham",
+      "spam",
+      "phishing"
+    ],
+    "confusion_matrix": [
+      [
+        1787,
+        1,
+        15
+      ],
+      [
+        9,
+        120,
+        0
+      ],
+      [
+        18,
+        0,
+        885
+      ]
+    ],
+    "per_class": {
+      "ham": {
+        "precision": 0.9851,
+        "recall": 0.9911,
+        "f1": 0.9881,
+        "support": 1803
+      },
+      "spam": {
+        "precision": 0.9917,
+        "recall": 0.9302,
+        "f1": 0.96,
+        "support": 129
+      },
+      "phishing": {
+        "precision": 0.9833,
+        "recall": 0.9801,
+        "f1": 0.9817,
+        "support": 903
+      }
+    }
+  },
+  "architecture": {
+    "features": [
+      "Word TF-IDF (1\u20132 n-grams, sublinear TF, 30k features)",
+      "Character TF-IDF (char_wb 3\u20135 n-grams, sublinear TF, 25k features)",
+      "14 Security & Structural Signals (URLs, IP links, TLDs, shorteners, brand spoofing, urgency & credential cues)"
+    ],
+    "ensemble": [
+      "Logistic Regression (C=4.0, class_weight=balanced, weight=2)",
+      "Calibrated LinearSVC (C=1.0, class_weight=balanced, weight=3)",
+      "Complement Naive Bayes (alpha=0.2, weight=1)"
+    ],
+    "hybrid_guard": "Combines ML probabilities with real-time URL forensics and phishing risk scoring (0\u2013100)."
+  }
+}

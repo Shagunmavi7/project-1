@@ -1,0 +1,22 @@
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+
+# Large downloaded datasets (>50MB, automatically downloaded/cached by ml/train.py)
+data/Phishing_Email.csv
+data/phishing_email_clean.csv
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini

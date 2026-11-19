@@ -1,92 +1,39 @@
-# 📧 Spam Email & Phishing Detection
+# MailGuard AI — High-Accuracy Spam & Phishing Detection App
 
-A machine learning project that classifies emails as **Spam / Phishing** or **Legitimate (Ham)** using Natural Language Processing (NLP).
+A full-stack machine learning web application and upgraded Google Colab notebook that detects **Ham (Legitimate)**, **Spam (Promotional)**, and **Phishing (Malicious)** emails and SMS messages with explainable URL & social-engineering forensics.
 
----
+## What Was Upgraded
+- **Word + Character N-Gram TF-IDF (`sublinear_tf=True`)**: Captures phrases (`verify your`, `free entry`) and character obfuscations (`£1000`, `.xyz`, `0800`, typosquatting).
+- **14 Handcrafted Security Signals**: URL count, raw IP URLs, URL shorteners, high-risk TLDs, `@` redirect obfuscation, brand impersonation on non-official domains, urgency cues, credential-harvesting cues, financial lures, digit/uppercase ratios, and length.
+- **Soft-Voting Ensemble**: Weighted combination of `LogisticRegression` (balanced), `CalibratedClassifierCV(LinearSVC)` (balanced), and `ComplementNB`.
+- **Hybrid Phishing Risk Engine**: Combines 3-class ML probabilities with real-time URL/domain inspection and inline threat highlighting.
 
-## 🚀 Features
-
-- Detects spam and phishing emails from raw text
-- Text preprocessing (lowercasing, stopword removal, tokenization, stemming/lemmatization)
-- TF-IDF feature extraction
-- Trained and compared multiple ML models
-- Simple web interface to paste an email and get an instant prediction
-- Displays model accuracy, precision, recall and F1-score
-
----
-
-## 🛠️ Tech Stack
-
-| Area | Tools |
-|---|---|
-| Language | Python 3 |
-| Data handling | Pandas, NumPy |
-| NLP | NLTK, TF-IDF (scikit-learn) |
-| ML models | Naive Bayes, Logistic Regression, SVM `<edit to match yours>` |
-| Web app | `<Flask / Streamlit / FastAPI>` |
-| Frontend | HTML, CSS, JavaScript `<edit>` |
-
----
-
-## 📂 Project Structure
-
-```
-spam-phishing-detection/
-│
-├── data/                 # Dataset (CSV)
-├── notebooks/            # Training & EDA notebooks
-├── model/                # Saved model and vectorizer (.pkl)
-├── templates/            # HTML files
-├── static/               # CSS / JS
-├── app.py                # Web app entry point
-├── train.py              # Model training script
-├── requirements.txt
-└── README.md
+## Project Structure
+```text
+mailguard-ai/
+├── app.py                              # FastAPI server + REST API + static frontend
+├── ml/
+│   ├── features.py                     # Phishing signal analyzer + sklearn feature pipeline
+│   └── train.py                        # Dataset loader, benchmark evaluator & 3-class trainer
+├── notebooks/
+│   └── spam_phishing_upgraded.ipynb    # Ready-to-upload Google Colab notebook
+├── static/
+│   ├── index.html                      # MailGuard AI dashboard
+│   ├── styles.css                      # Dark-mode cybersecurity UI
+│   └── app.js                          # Live scanner, batch/CSV scanner & model telemetry
+├── model_artifacts/                    # Saved model (.joblib) & metrics.json
+└── requirements.txt
 ```
 
----
+## Quick Start
+```powershell
+# 1. Activate virtual environment
+.\venv\Scripts\Activate.ps1
 
+# 2. Train & benchmark the 3-class model (downloads SMS Spam + Phishing Email datasets)
+python ml/train.py
 
-
-## ⚙️ How It Works
-
-1. **Load data** – read the email dataset with Pandas
-2. **Clean text** – remove punctuation, links, numbers and stopwords
-3. **Vectorize** – convert text into numbers using TF-IDF
-4. **Train** – fit the classification model on the training split
-5. **Evaluate** – check accuracy, precision, recall, F1 and confusion matrix
-6. **Predict** – the web app takes new email text and returns the result
-
----
-
-
-
----
-
-## 💡 Usage
-
-1. Paste the email text into the input box
-2. Click **Check**
-3. The app shows whether the email is **Spam/Phishing** or **Safe**, with a confidence score
-
----
-
-## ⚠️ Limitations
-
-- Accuracy depends on the dataset; new phishing styles may not be detected
-- Works on text only (does not analyze attachments or full email headers)
-- Should not replace professional email security tools
-
----
-
-## 🔮 Future Improvements
-
-- Detect malicious URLs inside emails
-- Use deep learning models (LSTM / BERT)
-- Analyze email headers and sender domain
-- Browser extension or Gmail integration
-
-
-## 📄 License
-
-This project is licensed under the MIT License.
+# 3. Start the web app
+python app.py
+```
+Then open **http://127.0.0.1:8000** in your browser.

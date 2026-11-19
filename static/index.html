@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MailGuard AI — Spam &amp; Phishing Threat Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <!-- Top Navigation -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L4 5.5V11.5C4 16.8 7.4 21.6 12 23C16.6 21.6 20 16.8 20 11.5V5.5L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M9 12.2L11.1 14.3L15.4 9.8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">MailGuard <span class="brand-accent">AI</span></div>
+          <div class="brand-sub">Spam &amp; Phishing Threat Engine</div>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab active" data-tab="scanner" role="tab" aria-selected="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          Live Scanner
+        </button>
+        <button class="nav-tab" data-tab="batch" role="tab" aria-selected="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Batch &amp; CSV
+        </button>
+        <button class="nav-tab" data-tab="intelligence" role="tab" aria-selected="false">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Model Intelligence
+        </button>
+      </nav>
+
+      <div class="status-pill" id="modelStatusPill">
+        <span class="status-dot"></span>
+        <span id="modelStatusText">Connecting engine...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ==================== TAB 1: LIVE SCANNER ==================== -->
+    <section class="tab-panel active" id="tab-scanner">
+      <div class="scanner-grid">
+        <!-- Left Column: Input Composer -->
+        <div class="col-left">
+          <div class="card composer-card">
+            <div class="card-header">
+              <div>
+                <h1 class="card-title">Analyze Email or SMS</h1>
+                <p class="card-subtitle">Real-time 3-class ML classification with URL &amp; social-engineering forensics</p>
+              </div>
+              <span class="kbd-hint">Ctrl + Enter</span>
+            </div>
+
+            <div class="presets-wrap">
+              <div class="presets-label">Try sample threats:</div>
+              <div class="preset-chips" id="presetChips"></div>
+            </div>
+
+            <div class="field-group">
+              <label for="subjectInput" class="field-label">Subject Line <span class="optional-tag">Optional</span></label>
+              <input id="subjectInput" type="text" class="text-input" placeholder="e.g., Urgent: Verify your PayPal account activity" autocomplete="off" />
+            </div>
+
+            <div class="field-group">
+              <label for="messageInput" class="field-label">Message Body</label>
+              <textarea id="messageInput" class="text-area" rows="8" placeholder="Paste any email, SMS, link, or suspicious message here to inspect for spam and phishing..."></textarea>
+            </div>
+
+            <div class="composer-meta">
+              <div class="meta-counters">
+                <span><strong id="charCount">0</strong> chars</span>
+                <span class="dot-sep">•</span>
+                <span><strong id="wordCount">0</strong> words</span>
+                <span class="dot-sep">•</span>
+                <span><strong id="urlCount">0</strong> URLs</span>
+              </div>
+              <div class="composer-actions">
+                <button type="button" class="btn btn-ghost" id="clearBtn">Clear</button>
+                <button type="button" class="btn btn-primary" id="analyzeBtn">
+                  <span class="btn-spinner hidden" id="analyzeSpinner"></span>
+                  <svg class="btn-icon" id="analyzeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L4 5.5V11.5C4 16.8 7.4 21.6 12 23C16.6 21.6 20 16.8 20 11.5V5.5L12 2Z"/></svg>
+                  <span id="analyzeBtnText">Scan Message</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Scan History -->
+          <div class="card history-card">
+            <div class="card-header compact">
+              <h2 class="section-heading">Recent Scans</h2>
+              <button type="button" class="text-btn" id="clearHistoryBtn">Clear all</button>
+            </div>
+            <div id="historyList" class="history-list">
+              <div class="empty-mini">No scans yet. Select a sample above or paste a message to begin.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Analysis Output -->
+        <div class="col-right">
+          <!-- Empty State -->
+          <div class="card empty-result-card" id="emptyResultState">
+            <div class="empty-shield">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M12 2L4 5.5V11.5C4 16.8 7.4 21.6 12 23C16.6 21.6 20 16.8 20 11.5V5.5L12 2Z"/>
+                <circle cx="12" cy="11.5" r="3"/>
+                <path d="M12 14.5v2.5"/>
+              </svg>
+            </div>
+            <h2>Ready for Deep Inspection</h2>
+            <p>Paste a message or pick a sample preset to run our 3-layer threat detection pipeline.</p>
+            <div class="feature-pillars">
+              <div class="pillar">
+                <div class="pillar-badge cyan">01</div>
+                <div>
+                  <div class="pillar-title">Word + Char N-Gram Ensemble</div>
+                  <div class="pillar-desc">Logistic Regression + Calibrated LinearSVC + ComplementNB voting across 55k features.</div>
+                </div>
+              </div>
+              <div class="pillar">
+                <div class="pillar-badge rose">02</div>
+                <div>
+                  <div class="pillar-title">URL &amp; Brand Spoof Forensics</div>
+                  <div class="pillar-desc">Flags raw IP links, suspicious TLDs, URL shorteners, &amp; non-official brand domains.</div>
+                </div>
+              </div>
+              <div class="pillar">
+                <div class="pillar-badge amber">03</div>
+                <div>
+                  <div class="pillar-title">Explainable Risk Highlights</div>
+                  <div class="pillar-desc">Highlights exact urgency, credential harvesting, and financial lures directly in the text.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Populated Results Stack -->
+          <div id="resultsStack" class="results-stack hidden">
+            <!-- Verdict Hero -->
+            <div class="card verdict-card" id="verdictCard">
+              <div class="verdict-top">
+                <div class="gauge-wrap">
+                  <svg class="gauge-svg" viewBox="0 0 120 120">
+                    <circle class="gauge-track" cx="60" cy="60" r="50" />
+                    <circle class="gauge-progress" id="gaugeArc" cx="60" cy="60" r="50" />
+                  </svg>
+                  <div class="gauge-center">
+                    <div class="gauge-score" id="threatScoreValue">0</div>
+                    <div class="gauge-label">THREAT</div>
+                  </div>
+                </div>
+
+                <div class="verdict-info">
+                  <div class="verdict-badges">
+                    <span class="verdict-pill" id="verdictPill">SAFE</span>
+                    <span class="risk-pill" id="riskLevelPill">RISK: SAFE</span>
+                    <span class="escalated-pill hidden" id="escalatedPill">URL/Signal Escalated</span>
+                  </div>
+                  <p class="verdict-summary" id="verdictSummary"></p>
+                  <div class="action-callout" id="actionCallout">
+                    <strong>Recommended Action:</strong> <span id="recommendedAction"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Class Probabilities -->
+            <div class="card">
+              <div class="card-header compact">
+                <h2 class="section-heading">3-Class Probability Distribution</h2>
+                <span class="mono-tag" id="signalScoreBadge">Phishing Signals: 0/100</span>
+              </div>
+              <div class="prob-bars">
+                <div class="prob-row">
+                  <div class="prob-head">
+                    <span class="prob-name"><span class="legend-dot ham"></span>Ham (Legitimate)</span>
+                    <span class="prob-val mono" id="probHamText">0.0%</span>
+                  </div>
+                  <div class="prob-track"><div class="prob-fill ham" id="probHamBar"></div></div>
+                </div>
+                <div class="prob-row">
+                  <div class="prob-head">
+                    <span class="prob-name"><span class="legend-dot spam"></span>Spam (Promotional)</span>
+                    <span class="prob-val mono" id="probSpamText">0.0%</span>
+                  </div>
+                  <div class="prob-track"><div class="prob-fill spam" id="probSpamBar"></div></div>
+                </div>
+                <div class="prob-row">
+                  <div class="prob-head">
+                    <span class="prob-name"><span class="legend-dot phishing"></span>Phishing (Malicious)</span>
+                    <span class="prob-val mono" id="probPhishText">0.0%</span>
+                  </div>
+                  <div class="prob-track"><div class="prob-fill phishing" id="probPhishBar"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Inline Highlighted Message -->
+            <div class="card">
+              <div class="card-header compact">
+                <h2 class="section-heading">Token &amp; Threat Highlighting</h2>
+                <div class="hl-legend">
+                  <span class="hl-key url_danger">Risky URL</span>
+                  <span class="hl-key credential">Credential</span>
+                  <span class="hl-key urgency">Urgency</span>
+                  <span class="hl-key financial">Financial</span>
+                </div>
+              </div>
+              <div class="highlighted-box" id="highlightedMessage"></div>
+            </div>
+
+            <!-- URL Forensics (shown when URLs exist) -->
+            <div class="card hidden" id="urlForensicsCard">
+              <div class="card-header compact">
+                <h2 class="section-heading">URL &amp; Domain Forensics</h2>
+                <span class="mono-tag" id="urlForensicsCount">0 links</span>
+              </div>
+              <div class="url-list" id="urlList"></div>
+            </div>
+
+            <!-- Red Flags -->
+            <div class="card">
+              <div class="card-header compact">
+                <h2 class="section-heading">Security Findings &amp; Red Flags</h2>
+                <span class="mono-tag" id="redFlagsCount">0 flags</span>
+              </div>
+              <div class="flags-list" id="redFlagsList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: BATCH & CSV SCANNER ==================== -->
+    <section class="tab-panel" id="tab-batch">
+      <div class="batch-layout">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h1 class="card-title">Batch &amp; CSV Threat Scanner</h1>
+              <p class="card-subtitle">Scan dozens of messages at once or drop a CSV file (such as <code class="inline-code">mail_data.csv</code>)</p>
+            </div>
+            <div class="segmented" id="batchModeSwitch">
+              <button class="seg-btn active" data-mode="text">Paste Lines</button>
+              <button class="seg-btn" data-mode="csv">Upload CSV</button>
+            </div>
+          </div>
+
+          <div id="batchTextPane">
+            <textarea id="batchTextarea" class="text-area" rows="6" placeholder="Enter one message per line...&#10;Example:&#10;Hey, are we still on for lunch at 1pm?&#10;FREE £500 gift card! Text WIN to 80085 now!&#10;URGENT: Your PayPal account is suspended. Verify at http://paypal-check.xyz/login"></textarea>
+            <div class="batch-actions">
+              <button type="button" class="btn btn-ghost" id="loadBatchSampleBtn">Load 6 Mixed Samples</button>
+              <button type="button" class="btn btn-primary" id="runBatchBtn">Run Batch Scan</button>
+            </div>
+          </div>
+
+          <div id="batchCsvPane" class="hidden">
+            <label class="dropzone" id="csvDropzone">
+              <input type="file" id="csvFileInput" accept=".csv,text/csv" hidden />
+              <div class="dropzone-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div class="dropzone-title">Drop a CSV file here or <span class="brand-accent">browse</span></div>
+              <div class="dropzone-sub">Auto-detects columns like <code>Message</code>, <code>Email Text</code>, or <code>text</code> (scans up to 200 rows)</div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Batch Results -->
+        <div id="batchResultsWrap" class="hidden">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">Total Scanned</div>
+              <div class="kpi-value" id="kpiTotal">0</div>
+            </div>
+            <div class="kpi-card ham">
+              <div class="kpi-label">Safe / Ham</div>
+              <div class="kpi-value" id="kpiHam">0</div>
+            </div>
+            <div class="kpi-card spam">
+              <div class="kpi-label">Spam Detected</div>
+              <div class="kpi-value" id="kpiSpam">0</div>
+            </div>
+            <div class="kpi-card phishing">
+              <div class="kpi-label">Phishing Threats</div>
+              <div class="kpi-value" id="kpiPhish">0</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header compact">
+              <div class="filter-pills" id="batchFilters">
+                <button class="filter-pill active" data-filter="ALL">All</button>
+                <button class="filter-pill" data-filter="PHISHING">Phishing</button>
+                <button class="filter-pill" data-filter="SPAM">Spam</button>
+                <button class="filter-pill" data-filter="HAM">Ham</button>
+              </div>
+              <button type="button" class="btn btn-ghost small" id="exportCsvBtn">Export CSV</button>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Verdict</th>
+                    <th>Threat</th>
+                    <th>Message Preview</th>
+                    <th>Top Signal</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="batchTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: MODEL INTELLIGENCE ==================== -->
+    <section class="tab-panel" id="tab-intelligence">
+      <div class="intel-layout">
+        <div class="card hero-banner">
+          <div>
+            <div class="banner-eyebrow">Upgraded ML Pipeline Telemetry</div>
+            <h1 class="banner-title">From Single Logistic Regression to a 3-Class Hybrid Threat Ensemble</h1>
+            <p class="banner-desc">Live metrics evaluated on deduplicated stratified holdout splits combining the SMS Spam dataset and public Phishing Email corpus.</p>
+          </div>
+          <div class="hero-stats" id="heroStats"></div>
+        </div>
+
+        <div class="intel-grid">
+          <!-- Binary Benchmark Table -->
+          <div class="card">
+            <div class="card-header compact">
+              <div>
+                <h2 class="section-heading">Spam vs. Ham Upgrade Benchmark</h2>
+                <p class="card-subtitle">Deduplicated stratified test set from <code class="inline-code">mail_data.csv</code></p>
+              </div>
+              <span class="mono-tag" id="cvBadge">5-Fold CV</span>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="binaryBenchmarkTable">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Accuracy</th>
+                    <th>Spam Prec.</th>
+                    <th>Spam Recall</th>
+                    <th>Spam F1</th>
+                    <th>ROC-AUC</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 3-Class Confusion Matrix -->
+          <div class="card">
+            <div class="card-header compact">
+              <div>
+                <h2 class="section-heading">3-Class Confusion Matrix</h2>
+                <p class="card-subtitle">Rows = True Label • Columns = Predicted Label</p>
+              </div>
+              <span class="mono-tag" id="threeClassTestCount">Test split</span>
+            </div>
+            <div class="cm-container" id="confusionMatrixContainer"></div>
+          </div>
+        </div>
+
+        <!-- Per-Class Metrics + Architecture -->
+        <div class="intel-grid">
+          <div class="card">
+            <div class="card-header compact">
+              <h2 class="section-heading">3-Class Per-Label Performance</h2>
+              <span class="mono-tag" id="datasetSizeBadge">0 unique samples</span>
+            </div>
+            <div class="per-class-grid" id="perClassGrid"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header compact">
+              <h2 class="section-heading">Hybrid Detection Architecture</h2>
+              <span class="mono-tag">scikit-learn + Forensics</span>
+            </div>
+            <div id="architectureList" class="arch-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
