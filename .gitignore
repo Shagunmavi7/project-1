@@ -20,3 +20,7 @@ data/phishing_email_clean.csv
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Netlify local state
+.netlify/
+
