@@ -202,6 +202,21 @@ def serve_index():
     return FileResponse(STATIC_DIR / "index.html")
 
 
+@app.get("/styles.css")
+def serve_styles():
+    return FileResponse(STATIC_DIR / "styles.css", media_type="text/css")
+
+
+@app.get("/app.js")
+def serve_js():
+    return FileResponse(STATIC_DIR / "app.js", media_type="application/javascript")
+
+
+@app.get("/sample_emails.csv")
+def serve_sample_csv():
+    return FileResponse(STATIC_DIR / "sample_emails.csv", media_type="text/csv")
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=False)

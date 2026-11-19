@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="bg-glow bg-glow-1"></div>
@@ -278,6 +278,12 @@
               </div>
               <div class="dropzone-title">Drop a CSV file here or <span class="brand-accent">browse</span></div>
               <div class="dropzone-sub">Auto-detects columns like <code>Message</code>, <code>Email Text</code>, or <code>text</code> (scans up to 200 rows)</div>
+              <div style="margin-top: 14px;">
+                <a href="sample_emails.csv" download="sample_emails.csv" class="btn btn-ghost small" style="text-decoration: none;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download Sample Test CSV
+                </a>
+              </div>
             </label>
           </div>
         </div>
@@ -410,6 +416,6 @@
 
   <div class="toast hidden" id="toast"></div>
 
-  <script src="/static/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
